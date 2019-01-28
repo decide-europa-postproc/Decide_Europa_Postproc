@@ -1,4 +1,4 @@
-from python:alpine
+FROM python:alpine
 
 RUN apk add --no-cache git postgresql-dev gcc libc-dev
 RUN apk add --no-cache gcc g++ make libffi-dev python3-dev build-base
@@ -10,7 +10,7 @@ RUN pip install ipython
 
 WORKDIR /app
 
-RUN git clone https://github.com/decide-europa-postproc/Decide_Europa_Postproc.git .
+ADD ./ /app/
 RUN pip install -r requirements.txt
 
 WORKDIR /app/decide
@@ -18,6 +18,7 @@ WORKDIR /app/decide
 # local settings.py
 ADD docker-settings.py /app/decide/local_settings.py
 
+RUN ls
 RUN ./manage.py collectstatic
 
 #CMD ["gunicorn", "-w 5", "decide.wsgi", "--timeout=500", "-b 0.0.0.0:5000"]
