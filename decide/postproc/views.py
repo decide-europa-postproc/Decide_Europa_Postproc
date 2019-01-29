@@ -50,12 +50,11 @@ class PostProcView(APIView):
         #teniendo en cuenta los ya asignados
         for i in range(seats):
             max(options, 
-                key = lambda x : x['votes'] / ( x['seats'] + (1.0 / 3.0))['seats'] += 1
+                key = lambda x : x['votes'] / ( x['seats'] + (1.0 / 3.0)))['seats'] += 1
 
         #Se ordenan las opciones por el número de escaños
         options.sort(key=lambda x: -x['seats'])
         return Response(options)
-
 
     def multiQuestions(self, questions):
 
