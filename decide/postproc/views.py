@@ -56,6 +56,21 @@ class PostProcView(APIView):
         options.sort(key=lambda x: -x['seats'])
         return Response(options)
 
+    def imperiali(self, options, seats):
+        #Se añade un campo de escaños (seats) a cada una de las opciones
+        for opt in options:
+            opt['seats'] = 0
+
+        #Para cada uno de los escaños se calcula a que opción le correspondería el escaño
+        #teniendo en cuenta los ya asignados
+        for i in range(seats):
+            max(options,
+                key = lambda x : x['votes'] / ( x['seats'] + 0.5))['seats'] += 1
+
+        #Se ordenan las opciones por el número de escaños
+        options.sort(key=lambda x: -x['seats'])
+        return Response(options)
+
     def multiQuestions(self, questions):
 
         for question in questions:
@@ -124,6 +139,10 @@ class PostProcView(APIView):
                 seats = int(float(request.data.get('seats', '8')))
                 return self.equalityVoting(opts, seats, lambda x, y : self.danish(x, y))
 
+            elif t == 'IMPERIALI':
+                seats = int(float(request.data.get('seats', '8')))
+                return self.equalityVoting(opts, seats, lambda x, y : self.imperiali(x, y))
+
         elif t == 'IDENTITY':
             return self.identity(opts)
 
@@ -142,5 +161,9 @@ class PostProcView(APIView):
         elif t == 'DANISH':
             seats = int(float(request.data.get('seats', '8')))
             return self.danish(opts, seats) 
+
+        elif t == 'IMPERIALI':
+            seats = int(float(request.data.get('seats', '8')))
+            return self.imperiali(opts, seats)
 
         return Response({})
